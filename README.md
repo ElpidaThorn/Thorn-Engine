@@ -22,4 +22,4 @@ Thorn is an runic letter that I think is cool
 
 One more thing, Thorn Engine was made in under 2 days; it might be very buggy or hard to work with and needs a lot of ironing out. I will be working hard on Thorn Engine making sure it is perfect for any young developer like myself. And before anyone ask, the official Thorn Engine release will be free. 
 
-- Elpida 
+Have fun messing around! - Elpida 
