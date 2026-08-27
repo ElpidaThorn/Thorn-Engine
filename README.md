@@ -8,6 +8,10 @@ Thorn Engine is a bare bones game engine. The goal is for other people to modify
  - A Base Object
  - Projection
 
+Required stuff:
+- Pygame
+- Numpy
+
 Thorn Engine does not have a project or editor user interface, as stated before it is bare bones. The files are written in Python and it is recommended to know a lot about Python before modifying this. 
 
 Later down the road Thorn Engine will have an official release once everything has been finalized
