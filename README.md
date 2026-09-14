@@ -14,8 +14,6 @@ Required stuff:
 
 Thorn Engine does not have a project or editor user interface, as stated before it is bare bones. The files are written in Python and it is recommended to know a lot about Python before modifying this. 
 
-Later down the road Thorn Engine will have an official release once everything has been finalized
-
 # Why the hell did you release this shit unfinished?
 
 The goal was to create something like Linux which is a bare bones operating system without a Graphical User Interface.
