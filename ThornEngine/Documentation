@@ -7,6 +7,9 @@ A open source game engine that YOU can edit to YOUR liking!
 Controls when running main.py:
 ~ to open system performance
 Right click and drag to move the camera
+W, A, S, and D to move around
+Q to move up
+E to move down
 
 Have fun!
 - Elpida :]
