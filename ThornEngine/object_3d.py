@@ -1,6 +1,10 @@
 import numpy as np
 import pygame as pg
-from matrix_functions import rotate, rotate_y, rotate_z, scale, translate
+
+try:
+    from .matrix_functions import rotate, rotate_y, rotate_z, scale, translate
+except ImportError:
+    from matrix_functions import rotate, rotate_y, rotate_z, scale, translate
 
 class Object3D:
     def __init__(self, render):
@@ -24,7 +28,12 @@ class Object3D:
             (1, 2, 6, 5),
             (0, 3, 7, 4)])
 
-        self.font = pg.font.SysFont('Arial', 30, bold=True)
+        self.font = None
+        if pg.font and pg.font.get_init():
+            try:
+                self.font = pg.font.SysFont('Arial', 30, bold=True)
+            except (AttributeError, NotImplementedError):
+                self.font = None
         self.color_faces = [(pg.Color('orange'), face) for face in self.faces]
         self.movement_flag = True
         self.draw_vertexes = True
@@ -52,7 +61,7 @@ class Object3D:
             if np.all(depth_valid[face]):
                 polygon = vertexes[face]
                 pg.draw.polygon(self.render.screen, color, polygon, 3)
-                if self.label:
+                if self.label and self.font is not None:
                     text = self.font.render(
                         self.label[index], True, pg.Color('white')
                     )

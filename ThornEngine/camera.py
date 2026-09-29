@@ -1,5 +1,12 @@
+import math
+
+import numpy as np
 import pygame as pg
-from matrix_functions import *
+
+try:
+    from .matrix_functions import rotate, rotate_y
+except ImportError:
+    from matrix_functions import rotate, rotate_y
 
 class Camera:
     def __init__(self, render, position):
@@ -16,6 +23,23 @@ class Camera:
         self.far_plane = 100
         self.moving_speed = 0.02
         self.rotate_speed = 0.01
+        self.mouse_sensitivity = 0.003
+        self.mouse_look = False
+
+    def set_mouse_look(self, enabled):
+        if self.mouse_look == enabled:
+            return
+
+        self.mouse_look = enabled
+        pg.event.set_grab(enabled)
+        pg.mouse.set_visible(not enabled)
+        pg.mouse.get_rel()
+
+    def handle_mouse_motion(self, relative):
+        if self.mouse_look:
+            dx, dy = relative
+            self.camera_yaw(-dx * self.mouse_sensitivity)
+            self.camera_pitch(-dy * self.mouse_sensitivity)
 
     def control(self):
         key = pg.key.get_pressed()
