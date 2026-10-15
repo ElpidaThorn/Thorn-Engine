@@ -5,8 +5,11 @@ import pygame as pg
 
 try:
     from .matrix_functions import rotate, rotate_y
-except ImportError:
-    from matrix_functions import rotate, rotate_y
+except ImportError:  # pragma: no cover - allow direct execution from the repo root
+    try:
+        from ThornEngine.matrix_functions import rotate, rotate_y
+    except ImportError:
+        from matrix_functions import rotate, rotate_y
 
 class Camera:
     def __init__(self, render, position):
@@ -18,12 +21,13 @@ class Camera:
         self.yaw = 0.0
         self.pitch = 0.0
         self.h_fov = math.pi / 3
-        self.v_fov = self.h_fov * (render.HEIGHT / render.WIDTH)
+        self.update_aspect_ratio(render.WIDTH, render.HEIGHT)
         self.near_plane = 0.1
         self.far_plane = 100
-        self.moving_speed = 0.02
-        self.rotate_speed = 0.01
+        self.moving_speed = 3.0
+        self.rotate_speed = 1.0
         self.mouse_sensitivity = 0.003
+        self.scroll_speed = 0.5
         self.mouse_look = False
 
     def set_mouse_look(self, enabled):
@@ -41,29 +45,46 @@ class Camera:
             self.camera_yaw(-dx * self.mouse_sensitivity)
             self.camera_pitch(-dy * self.mouse_sensitivity)
 
-    def control(self):
+    def control(self, delta_time=1 / 60, allow_rotation=True):
         key = pg.key.get_pressed()
+        movement = np.zeros(4)
         if key[pg.K_a]:
-            self.position -= self.right * self.moving_speed
+            movement -= self.right
         if key[pg.K_d]:
-            self.position += self.right * self.moving_speed
+            movement += self.right
         if key[pg.K_q]:
-            self.position += self.up * self.moving_speed
+            movement += self.up
         if key[pg.K_e]:
-            self.position -= self.up * self.moving_speed
+            movement -= self.up
         if key[pg.K_w]:
-            self.position += self.forward * self.moving_speed
+            movement += self.forward
         if key[pg.K_s]:
-            self.position -= self.forward * self.moving_speed
+            movement -= self.forward
 
-        if key[pg.K_RIGHT]:
-            self.camera_yaw(-self.rotate_speed)
-        if key[pg.K_LEFT]:
-            self.camera_yaw(self.rotate_speed)
-        if key[pg.K_DOWN]:
-            self.camera_pitch(-self.rotate_speed)
-        if key[pg.K_UP]:
-            self.camera_pitch(self.rotate_speed)
+        movement_length = np.linalg.norm(movement[:3])
+        if movement_length:
+            self.position += (
+                movement / movement_length * self.moving_speed * delta_time
+            )
+
+        if allow_rotation:
+            if key[pg.K_RIGHT]:
+                self.camera_yaw(-self.rotate_speed * delta_time)
+            if key[pg.K_LEFT]:
+                self.camera_yaw(self.rotate_speed * delta_time)
+            if key[pg.K_DOWN]:
+                self.camera_pitch(-self.rotate_speed * delta_time)
+            if key[pg.K_UP]:
+                self.camera_pitch(self.rotate_speed * delta_time)
+
+    def scroll(self, amount):
+        self.position += self.forward * (amount * self.scroll_speed)
+
+    def update_aspect_ratio(self, width, height):
+        if width <= 0 or height <= 0:
+            return
+        aspect_ratio = width / height
+        self.v_fov = 2 * math.atan(math.tan(self.h_fov / 2) / aspect_ratio)
 
     def camera_yaw(self, angle):
         self.yaw += angle
